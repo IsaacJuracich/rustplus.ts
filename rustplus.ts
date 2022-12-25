@@ -70,7 +70,7 @@ export default class RustPlus extends EventEmitter {
       this.emit("connecting");
 
       // connect to websocket
-      var address = this.useFacepunchProxy
+      const address = this.useFacepunchProxy
         ? `wss://companion-rust.facepunch.com/game/${this.server}/${this.port}`
         : `ws://${this.server}:${this.port}`;
       this.websocket = new WebSocket(address);
@@ -87,7 +87,7 @@ export default class RustPlus extends EventEmitter {
 
       this.websocket.on("message", (data: any) => {
         // decode received message
-        var message = this.AppMessage.decode(data);
+        const message = this.AppMessage.decode(data);
 
         // check if received message is a response and if we have a callback registered for it
         if (
@@ -96,10 +96,10 @@ export default class RustPlus extends EventEmitter {
           this.seqCallbacks[message.response.seq]
         ) {
           // get the callback for the response sequence
-          var callback = this.seqCallbacks[message.response.seq];
+          const callback = this.seqCallbacks[message.response.seq];
 
           // call the callback with the response message
-          var result = callback(message);
+          const result = callback(message);
 
           // remove the callback
           delete this.seqCallbacks[message.response.seq];

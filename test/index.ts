@@ -18,6 +18,10 @@ const rust = new rustPlus(FCM.ip, FCM.port, FCM.playerId, FCM.playerToken);
 rust.on("connected", () => {
   console.log("Connected to Rust server");
   rust.sendTeamMessage("ls");
+
+  rust.getMapMarkers((markers) => {
+    console.log(markers);
+  });
 });
 
 rust.connect();

@@ -4,7 +4,20 @@ import protobuf from "protobufjs";
 import WebSocket from "ws";
 import path from "path";
 import { EventEmitter } from "events";
+import {
+  AppRequest,
+  AppMessage,
+  AppResponse,
+  AppMapMarkers,
+  AppInfo,
+  AppTeamInfo,
+  AppCameraFrame,
+  AppTime,
+  AppMap,
+  AppEntityInfo,
+} from "./libs/rustplus";
 
+interface IMapMarker {}
 export default class RustPlus extends EventEmitter {
   websocket: WebSocket | null;
   server: string;
@@ -136,7 +149,7 @@ export default class RustPlus extends EventEmitter {
    * @param data this should contain valid data for the AppRequest packet in the rustplus.proto schema file
    * @param callback
    */
-  sendRequest(data: any, callback: Function) {
+  sendRequest(data: any, callback: (cb: AppMessage) => void) {
     // increment sequence number
     let currentSeq = ++this.seq;
 
@@ -173,7 +186,7 @@ export default class RustPlus extends EventEmitter {
       }, timeoutMilliseconds);
 
       // send request
-      this.sendRequest(data, (message: any) => {
+      this.sendRequest(data, (message: AppMessage) => {
         // cancel timeout
         clearTimeout(timeout);
 
@@ -202,7 +215,11 @@ export default class RustPlus extends EventEmitter {
           value: value,
         },
       },
-      callback
+      (message: AppMessage) => {
+        if (callback) {
+          callback(message);
+        }
+      }
     );
   }
 
@@ -248,7 +265,11 @@ export default class RustPlus extends EventEmitter {
           message: message,
         },
       },
-      callback
+      (message: AppMessage) => {
+        if (callback) {
+          callback(message);
+        }
+      }
     );
   }
 
@@ -257,73 +278,85 @@ export default class RustPlus extends EventEmitter {
    * @param entityId the id of the entity to get info of
    * @param callback
    */
-  getEntityInfo(entityId: number, callback: Function) {
+  getEntityInfo(entityId: number, callback: (cb: AppEntityInfo) => void) {
     this.sendRequest(
       {
         entityId: entityId,
         getEntityInfo: {},
       },
-      callback
+      (message: AppMessage) => {
+        callback(message.response.entityInfo);
+      }
     );
   }
 
   /**
    * Get the Map
    */
-  getMap(callback: Function) {
+  getMap(callback: (cb: AppMap) => void) {
     this.sendRequest(
       {
         getMap: {},
       },
-      callback
+      (message: AppMessage) => {
+        callback(message.response.map);
+      }
     );
   }
 
   /**
    * Get the ingame time
    */
-  getTime(callback: Function) {
+  getTime(callback: (cb: AppTime) => void) {
     this.sendRequest(
       {
         getTime: {},
       },
-      callback
+      (message: AppMessage) => {
+        callback(message.response.time);
+      }
     );
   }
 
   /**
    * Get all map markers
    */
-  getMapMarkers(callback: Function) {
+  getMapMarkers(callback: (cb: AppMapMarkers) => void) {
     this.sendRequest(
       {
         getMapMarkers: {},
       },
-      callback
+      (message: AppMessage) => {
+        callback(message.response.mapMarkers);
+      }
     );
   }
 
   /**
    * Get the server info
    */
-  getInfo(callback: Function) {
+  getInfo(callback: (cb: AppInfo) => void) {
     this.sendRequest(
       {
         getInfo: {},
       },
-      callback
+      (message: AppMessage) => {
+        callback(message.response.info);
+      }
     );
   }
 
   /**
    * Get team info
    */
-  getTeamInfo(callback: Function) {
+  getTeamInfo(callback: (cb: AppTeamInfo) => void) {
     this.sendRequest(
       {
         getTeamInfo: {},
       },
-      callback
+      (message: AppMessage) => {
+        callback(message.response.teamInfo);
+      }
     );
   }
 
@@ -333,7 +366,11 @@ export default class RustPlus extends EventEmitter {
    * @param frame integer that should be incremented for each frame request. Otherwise a cached frame is returned
    * @param callback
    */
-  getCameraFrame(identifier: string, frame: number, callback: Function) {
+  getCameraFrame(
+    identifier: string,
+    frame: number,
+    callback: (cb: AppCameraFrame) => void
+  ) {
     this.sendRequest(
       {
         getCameraFrame: {
@@ -341,7 +378,9 @@ export default class RustPlus extends EventEmitter {
           frame: frame,
         },
       },
-      callback
+      (message: AppMessage) => {
+        callback(message.response.cameraFrame);
+      }
     );
   }
 }

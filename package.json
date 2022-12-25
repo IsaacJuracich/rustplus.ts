@@ -6,6 +6,9 @@
   "bin": {
     "rustplus": "./cli/index.js"
   },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/liamcottle/rustplus.js.git"
@@ -29,6 +32,7 @@
   },
   "homepage": "https://github.com/liamcottle/rustplus.js#readme",
   "dependencies": {
+    "@protobuf-ts/plugin": "^2.8.2",
     "@types/protobufjs": "^6.0.0",
     "@types/ws": "^8.5.3",
     "axios": "^0.24.0",

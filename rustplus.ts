@@ -124,7 +124,7 @@ export default class RustPlus extends EventEmitter {
         }
 
         // fire message event for received messages that aren't handled by callback
-        this.emit("message", this.AppMessage.decode(data));
+        this.emit("message", this.AppMessage.decode(data) as AppMessage);
       });
 
       // fire event when disconnected

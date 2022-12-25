@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "proto3";
 package rustplus;
 
 // This took me a while to craft by hand 😴
